@@ -1,8 +1,10 @@
-# MongoDB adapter for lockit
+# Lockit MongoDB adapter
 
-[![Build Status](https://travis-ci.org/zeMirco/lockit-mongodb-adapter.png)](https://travis-ci.org/zeMirco/lockit-mongodb-adapter)
+[![Build Status](https://travis-ci.org/zeMirco/lockit-mongodb-adapter.png)](https://travis-ci.org/zeMirco/lockit-mongodb-adapter) [![NPM version](https://badge.fury.io/js/lockit-mongodb-adapter.png)](http://badge.fury.io/js/lockit-mongodb-adapter)
 
-work in progress - come back later
+[![NPM](https://nodei.co/npm/lockit-mongodb-adapter.png)](https://nodei.co/npm/lockit-mongodb-adapter/)
+
+MongoDB adapter for [Lockit](https://github.com/zeMirco/lockit).
 
 ## Installation
 
@@ -12,7 +14,17 @@ work in progress - come back later
 var adapter = require('lockit-mongodb-adapter');
 ```
 
-## What's included?
+## Configuration
+
+The following settings are required.
+
+```js
+exports.db = 'mongodb';
+exports.dbUrl = 'mongodb://127.0.0.1/test';
+exports.dbCollection = 'users';
+```
+
+## Features
 
 ### 1. Create user
 
