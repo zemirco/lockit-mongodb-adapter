@@ -2,6 +2,9 @@
 var MongoClient = require('mongodb').MongoClient;
 var uuid = require('node-uuid');
 var bcrypt = require('bcrypt');
+var ms = require('ms');
+var moment = require('moment');
+var debug = require('debug')('lockit-mongodb-adapter');
 
 module.exports = function(config) {
 
@@ -9,6 +12,7 @@ module.exports = function(config) {
   var db;
   MongoClient.connect(config.dbUrl, function(err, database) {
     if (err) throw err;
+    debug('connected to MongoDB');
     db = database;
   });
 
@@ -18,23 +22,26 @@ module.exports = function(config) {
   adapter.save = function(name, email, pw, done) {
 
     // set sign up token expiration date
-    var now = new Date();
-    var tomorrow = now.setTime(now.getTime() + (config.signupTokenExpiration));
+
+    var now = moment().toDate();
+    var timespan = ms(config.signupTokenExpiration);
+    var future = moment().add(timespan, 'ms').toDate();
 
     var user = {
       username: name,
       email: email,
       signupToken: uuid.v4(),
-      signupTimestamp: new Date(),
-      signupTokenExpires: new Date(tomorrow),
+      signupTimestamp: now,
+      signupTokenExpires: future,
       failedLoginAttempts: 0
     };
 
-    // create salt and hash password
+    // create hashed password
     bcrypt.hash(pw, 10, function(err, hash) {
       if (err) return done(err);
       user.hash = hash;
 
+      debug('New user created: %j', user);
       db.collection(config.dbCollection).save(user, done);
 
     });
@@ -47,6 +54,7 @@ module.exports = function(config) {
     var qry = {};
     qry[match] = query;
 
+    debug('finding user with %s "%s"', match, query);
     db.collection(config.dbCollection).find(qry).nextObject(done);
 
   };
@@ -59,6 +67,7 @@ module.exports = function(config) {
       if (err) console.log(err);
 
       // res is not the updated user object! -> find manually
+      debug('updating user: %j', user);
       db.collection(config.dbCollection).find({_id: user._id}).nextObject(done);
 
     });
@@ -74,6 +83,7 @@ module.exports = function(config) {
     db.collection(config.dbCollection).remove(qry, function(err, numberOfRemovedDocs) {
       if (err) return done(err);
       if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find ' + match + ': "' + query + '"'));
+      debug('user removed from db');
       done(null, true);
     });
 
