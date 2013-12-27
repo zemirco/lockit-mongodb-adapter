@@ -4,7 +4,7 @@ var config = require('./config.js');
 
 var adapter = require('../index.js')(config);
 
-// wait for connection being established
+// wait for connection to db
 before(function(done) {
   
   setTimeout(function() {
