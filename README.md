@@ -28,7 +28,7 @@ exports.dbCollection = 'users';
 
 ### 1. Create user
 
-`adapter.create(name, email, pass, callback)`
+`adapter.save(name, email, pass, callback)`
 
  - `name`: String - i.e. 'john'
  - `email`: String - i.e. 'john@email.com'
@@ -46,17 +46,18 @@ The `user` object has the following properties
  - `failedLoginAttempts`: save failed login attempts during login process, default is `0`
 
 ```js
-adapter.create('john', 'john@email.com', 'secret', function(err, user) {
+adapter.save('john', 'john@email.com', 'secret', function(err, user) {
   if (err) console.log(err);
   console.log(user);
   // {
   //  username: 'john',
   //  email: 'john@email.com',
-  //  signupToken: 'fed26ce9-2628-405a-b9fa-285d4a66f4c3',
-  //  signupTimestamp: '2013-09-21T10:10:50.357Z',
-  //  signupTokenExpires: null,
+  //  signupToken: 'ef32a95a-d6ee-405a-8e4b-515b235f7c54',
+  //  signupTimestamp: Wed Jan 15 2014 19:08:27 GMT+0100 (CET),
+  //  signupTokenExpires: Wed Jan 15 2014 19:08:27 GMT+0100 (CET),
   //  failedLoginAttempts: 0,
-  //  hash: '$2a$10$OUNHWf0nCksGgrVqR7O3f.YqqDTuTTe5HqGMw0OiNMy0cixwSS5Km'
+  //  hash: '$2a$10$1IpbBVnhaNNAymV3HXO/z.632Knz27Od.oKpO1YoFnLlUjJMNcCEO',
+  //  _id: 52d6ce9b651b4d825351641f
   // }
 });
 ```
@@ -74,15 +75,14 @@ adapter.find('username', 'john', function(err, user) {
   if (err) console.log(err);
   console.log(user);
   // {
-  //  _id: '8c7cd00c55a25ceb279a8e893d011b3e',
-  //  _rev: '1-530a4cd8e67d51daf74e059899c39cd5',
   //  username: 'john',
   //  email: 'john@email.com',
-  //  signupToken: 'fed26ce9-2628-405a-b9fa-285d4a66f4c3',
-  //  signupTimestamp: '2013-09-21T10:10:50.357Z',
-  //  signupTokenExpires: null,
+  //  signupToken: 'fe1a14ca-e614-4eb5-9dff-d5d947b5ba19',
+  //  signupTimestamp: Wed Jan 15 2014 19:10:53 GMT+0100 (CET),
+  //  signupTokenExpires: Wed Jan 15 2014 19:10:53 GMT+0100 (CET),
   //  failedLoginAttempts: 0,
-  //  hash: '$2a$10$OUNHWf0nCksGgrVqR7O3f.YqqDTuTTe5HqGMw0OiNMy0cixwSS5Km'
+  //  hash: '$2a$10$jFcGpdDKk/hqhP93VQGcce5zgoWVPGi7bQvpjupaOUKqIVBV.yI1e',
+  //  _id: 52d6cf2d0ed24a865323739d
   // }
 });
 ```
