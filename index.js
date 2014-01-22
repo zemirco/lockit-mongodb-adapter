@@ -10,7 +10,7 @@ module.exports = function(config) {
 
   // create connection as soon as module is required and share global db object
   var db;
-  MongoClient.connect(config.dbUrl, function(err, database) {
+  MongoClient.connect(config.db, function(err, database) {
     if (err) throw err;
     debug('connected to MongoDB');
     db = database;
@@ -24,7 +24,7 @@ module.exports = function(config) {
     // set sign up token expiration date
 
     var now = moment().toDate();
-    var timespan = ms(config.signupTokenExpiration);
+    var timespan = ms(config.signup.tokenExpiration);
     var future = moment().add(timespan, 'ms').toDate();
 
     var user = {
