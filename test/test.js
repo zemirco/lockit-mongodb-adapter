@@ -6,11 +6,11 @@ var adapter = require('../index.js')(config);
 
 // wait for connection to db
 before(function(done) {
-  
+
   setTimeout(function() {
     done();
   }, 3000);
-  
+
 });
 
 describe('lockit-mongodb-adapter', function() {
@@ -86,7 +86,7 @@ describe('lockit-mongodb-adapter', function() {
   it('should remove a user', function(done) {
     adapter.save('jeff', 'jeff@email.com', 'secret', function(err, res) {
       if (err) console.log(err);
-      adapter.remove('username', 'jeff', function(err, res) {
+      adapter.remove('jeff', function(err, res) {
         if (err) console.log(err);
         res.should.be.true;
         done();
@@ -95,12 +95,12 @@ describe('lockit-mongodb-adapter', function() {
   });
 
   it('should return an error when remove cannot find a user', function(done) {
-    adapter.remove('username', 'steve', function(err, res) {
-      err.message.should.equal('lockit - Cannot find username: "steve"');
+    adapter.remove('steve', function(err, res) {
+      err.message.should.equal('lockit - Cannot find user "steve"');
       done();
     });
   });
-  
+
 });
 
 // remove users db
