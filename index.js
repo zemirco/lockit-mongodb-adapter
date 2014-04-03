@@ -68,14 +68,11 @@ module.exports = function(config) {
   };
 
   // remove an existing user from db
-  adapter.remove = function(match, query, done) {
+  adapter.remove = function(username, done) {
 
-    var qry = {};
-    qry[match] = query;
-
-    db.collection(config.dbCollection).remove(qry, function(err, numberOfRemovedDocs) {
+    db.collection(config.dbCollection).remove({username: username}, function(err, numberOfRemovedDocs) {
       if (err) return done(err);
-      if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find ' + match + ': "' + query + '"'));
+      if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + username + '"'));
       done(null, true);
     });
 
