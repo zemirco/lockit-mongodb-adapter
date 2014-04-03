@@ -106,6 +106,6 @@ describe('lockit-mongodb-adapter', function() {
 // remove users db
 after(function(done) {
 
-  adapter.remove('username', 'john', done);
+  adapter.remove('john', done);
 
 });
