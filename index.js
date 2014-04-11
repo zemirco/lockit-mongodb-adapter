@@ -1,7 +1,7 @@
 
 var MongoClient = require('mongodb').MongoClient;
 var uuid = require('node-uuid');
-var bcrypt = require('bcrypt');
+var pwd = require('couch-pwd');
 var ms = require('ms');
 var moment = require('moment');
 
@@ -19,14 +19,12 @@ module.exports = function(config) {
   // create a new user and return user object
   adapter.save = function(name, email, pw, done) {
 
-    // set sign up token expiration date
-
     var now = moment().toDate();
     var timespan = ms(config.signup.tokenExpiration);
     var future = moment().add(timespan, 'ms').toDate();
 
     var user = {
-      username: name,
+      name: name,
       email: email,
       signupToken: uuid.v4(),
       signupTimestamp: now,
@@ -34,10 +32,11 @@ module.exports = function(config) {
       failedLoginAttempts: 0
     };
 
-    // create hashed password
-    bcrypt.hash(pw, 10, function(err, hash) {
+    // create salt and hash
+    pwd.hash(pw, function(err, salt, hash) {
       if (err) return done(err);
-      user.hash = hash;
+      user.salt = salt;
+      user.derived_key = hash;
       db.collection(config.dbCollection).save(user, done);
     });
 
@@ -68,11 +67,11 @@ module.exports = function(config) {
   };
 
   // remove an existing user from db
-  adapter.remove = function(username, done) {
+  adapter.remove = function(name, done) {
 
-    db.collection(config.dbCollection).remove({username: username}, function(err, numberOfRemovedDocs) {
+    db.collection(config.dbCollection).remove({name: name}, function(err, numberOfRemovedDocs) {
       if (err) return done(err);
-      if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + username + '"'));
+      if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + name + '"'));
       done(null, true);
     });
 
