@@ -1,4 +1,10 @@
 
+##### 0.3.0 - 2014-04-11
+
+- key `username` is now `name`
+- use built-in [pbkdf2](http://nodejs.org/api/crypto.html#crypto_crypto_pbkdf2_password_salt_iterations_keylen_callback)
+  instead [bcrypt](https://github.com/ncb000gt/node.bcrypt.js/)
+
 ##### 0.2.0 - 2014-04-03
 
 - simplify `remove()` method
