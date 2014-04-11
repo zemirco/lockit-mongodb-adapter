@@ -31,17 +31,17 @@ describe('lockit-mongodb-adapter', function() {
     });
   });
 
-  it('should find a user by username', function(done) {
-    adapter.find('username', 'john', function(err, res) {
+  it('should find a user by name', function(done) {
+    adapter.find('name', 'john', function(err, res) {
       if (err) console.log(err);
-      res.username.should.equal('john');
+      res.name.should.equal('john');
       res.email.should.equal('john@email.com');
       done();
     });
   });
 
   it('should return undefined when no user is found', function(done) {
-    adapter.find('username', 'jim', function(err, res) {
+    adapter.find('name', 'jim', function(err, res) {
       if (err) console.log(err);
       should.not.exist(err);
       should.not.exist(res);
@@ -52,7 +52,7 @@ describe('lockit-mongodb-adapter', function() {
   it('should find a user by email', function(done) {
     adapter.find('email', 'john@email.com', function(err, res) {
       if (err) console.log(err);
-      res.username.should.equal('john');
+      res.name.should.equal('john');
       res.email.should.equal('john@email.com');
       done();
     });
@@ -61,14 +61,14 @@ describe('lockit-mongodb-adapter', function() {
   it('should find a user by signup token', function(done) {
     adapter.find('signupToken', _tmp_signupToken, function(err, res) {
       if (err) console.log(err);
-      res.username.should.equal('john');
+      res.name.should.equal('john');
       res.email.should.equal('john@email.com');
       done();
     });
   });
 
   it('should update an existing user', function(done) {
-    adapter.find('username', 'john', function(err, doc) {
+    adapter.find('name', 'john', function(err, doc) {
       if (err) console.log(err);
       doc.test = 'works';
       doc.editet = true;
@@ -80,8 +80,6 @@ describe('lockit-mongodb-adapter', function() {
       });
     });
   });
-
-
 
   it('should remove a user', function(done) {
     adapter.save('jeff', 'jeff@email.com', 'secret', function(err, res) {
@@ -105,7 +103,5 @@ describe('lockit-mongodb-adapter', function() {
 
 // remove users db
 after(function(done) {
-
   adapter.remove('john', done);
-
 });
