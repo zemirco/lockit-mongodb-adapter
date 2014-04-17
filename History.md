@@ -1,4 +1,27 @@
 
+
+##### 0.4.0 - 2014-04-17
+
+- database config has to be an Object and the database name isn't part of the
+  connection string anymore
+
+  **old**
+
+  ```js
+  exports.db = 'mongodb://127.0.0.1/test';
+  exports.dbCollection = 'users';
+  ```
+
+  **new**
+
+  ```js
+  exports.db = {
+    url: 'mongodb://127.0.0.1/',
+    name: 'test',
+    collection: 'users'
+  };
+  ```
+
 ##### 0.3.0 - 2014-04-11
 
 - key `username` is now `name`
