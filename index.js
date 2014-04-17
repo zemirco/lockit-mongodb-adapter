@@ -7,9 +7,15 @@ var moment = require('moment');
 
 module.exports = function(config) {
 
+  // short form for collection name
+  var coll = config.db.collection;
+
+  // create connection string
+  var url = config.db.url + config.db.name;
+
   // create connection as soon as module is required and share global db object
   var db;
-  MongoClient.connect(config.db, function(err, database) {
+  MongoClient.connect(url, function(err, database) {
     if (err) throw err;
     db = database;
   });
@@ -37,7 +43,7 @@ module.exports = function(config) {
       if (err) return done(err);
       user.salt = salt;
       user.derived_key = hash;
-      db.collection(config.dbCollection).save(user, done);
+      db.collection(coll).save(user, done);
     });
 
   };
@@ -48,7 +54,7 @@ module.exports = function(config) {
     var qry = {};
     qry[match] = query;
 
-    db.collection(config.dbCollection).find(qry).nextObject(done);
+    db.collection(coll).find(qry).nextObject(done);
 
   };
 
@@ -56,11 +62,11 @@ module.exports = function(config) {
   adapter.update = function(user, done) {
 
     // update user in db
-    db.collection(config.dbCollection).save(user, function(err, res) {
+    db.collection(coll).save(user, function(err, res) {
       if (err) console.log(err);
 
       // res is not the updated user object! -> find manually
-      db.collection(config.dbCollection).find({_id: user._id}).nextObject(done);
+      db.collection(coll).find({_id: user._id}).nextObject(done);
 
     });
 
@@ -69,7 +75,7 @@ module.exports = function(config) {
   // remove an existing user from db
   adapter.remove = function(name, done) {
 
-    db.collection(config.dbCollection).remove({name: name}, function(err, numberOfRemovedDocs) {
+    db.collection(coll).remove({name: name}, function(err, numberOfRemovedDocs) {
       if (err) return done(err);
       if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + name + '"'));
       done(null, true);
