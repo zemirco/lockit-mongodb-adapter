@@ -14,11 +14,14 @@ var adapter = require('lockit-mongodb-adapter');
 
 ## Configuration
 
-The following settings are required.
+The following setting is required.
 
 ```js
-exports.db = 'mongodb://127.0.0.1/test';
-exports.dbCollection = 'users';
+exports.db = {
+  url: 'mongodb://127.0.0.1/',
+  name: 'test',
+  collection: 'users'
+};
 ```
 
 ## Features
