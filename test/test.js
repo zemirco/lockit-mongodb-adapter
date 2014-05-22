@@ -9,7 +9,7 @@ before(function(done) {
 
   setTimeout(function() {
     done();
-  }, 3000);
+  }, 1000);
 
 });
 
