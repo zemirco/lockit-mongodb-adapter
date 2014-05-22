@@ -5,84 +5,113 @@ var pwd = require('couch-pwd');
 var ms = require('ms');
 var moment = require('moment');
 
-module.exports = function(config) {
 
-  // short form for collection name
-  var coll = config.db.collection;
+
+/**
+ * Adapter constructor function.
+ *
+ * @param {Object} config
+ * @constructor
+ */
+var Adapter = module.exports = function(config) {
+
+  if (!(this instanceof Adapter)) return new Adapter(config);
+
+  this.config = config;
+  this.collection = config.db.collection;
 
   // create connection string
   var url = config.db.url + config.db.name;
 
   // create connection as soon as module is required and share global db object
-  var db;
+  var that = this;
   MongoClient.connect(url, function(err, database) {
     if (err) throw err;
-    db = database;
+    that.db = database;
   });
 
-  var adapter = {};
+};
 
-  // create a new user and return user object
-  adapter.save = function(name, email, pw, done) {
 
-    var now = moment().toDate();
-    var timespan = ms(config.signup.tokenExpiration);
-    var future = moment().add(timespan, 'ms').toDate();
 
-    var user = {
-      name: name,
-      email: email,
-      signupToken: uuid.v4(),
-      signupTimestamp: now,
-      signupTokenExpires: future,
-      failedLoginAttempts: 0
-    };
+/**
+ * Create a new user.
+ *
+ * @param {String} name
+ * @param {String} email
+ * @param {String} pw
+ * @param {Function} done
+ */
+Adapter.prototype.save = function(name, email, pw, done) {
+  var that = this;
 
-    // create salt and hash
-    pwd.hash(pw, function(err, salt, hash) {
-      if (err) return done(err);
-      user.salt = salt;
-      user.derived_key = hash;
-      db.collection(coll).save(user, done);
-    });
+  var now = moment().toDate();
+  var timespan = ms(that.config.signup.tokenExpiration);
+  var future = moment().add(timespan, 'ms').toDate();
 
+  var user = {
+    name: name,
+    email: email,
+    signupToken: uuid.v4(),
+    signupTimestamp: now,
+    signupTokenExpires: future,
+    failedLoginAttempts: 0
   };
 
-  // find an existing user
-  adapter.find = function(match, query, done) {
+  // create salt and hash
+  pwd.hash(pw, function(err, salt, hash) {
+    if (err) return done(err);
+    user.salt = salt;
+    user.derived_key = hash;
+    that.db.collection(that.collection).save(user, done);
+  });
+};
 
-    var qry = {};
-    qry[match] = query;
 
-    db.collection(coll).find(qry).nextObject(done);
 
-  };
+/**
+ * Find user. Match is either `name`, `email` or `signupToken`.
+ *
+ * @param {String} match
+ * @param {String} query
+ * @param {Function} done
+ */
+Adapter.prototype.find = function(match, query, done) {
+  var qry = {};
+  qry[match] = query;
+  this.db.collection(this.collection).find(qry).nextObject(done);
+};
 
-  // update an existing user and return updated user object
-  adapter.update = function(user, done) {
 
-    // update user in db
-    db.collection(coll).save(user, function(err, res) {
-      if (err) console.log(err);
 
-      // res is not the updated user object! -> find manually
-      db.collection(coll).find({_id: user._id}).nextObject(done);
+/**
+ * Update existing user.
+ *
+ * @param {Object} user
+ * @param {Function} done
+ */
+Adapter.prototype.update = function(user, done) {
+  var that = this;
+  // update user in db
+  that.db.collection(that.collection).save(user, function(err, res) {
+    if (err) console.log(err);
+    // res is not the updated user object! -> find manually
+    that.db.collection(that.collection).find({_id: user._id}).nextObject(done);
+  });
+};
 
-    });
 
-  };
 
-  // remove an existing user from db
-  adapter.remove = function(name, done) {
-
-    db.collection(coll).remove({name: name}, function(err, numberOfRemovedDocs) {
-      if (err) return done(err);
-      if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + name + '"'));
-      done(null, true);
-    });
-
-  };
-
-  return adapter;
-
+/**
+ * Delete existing user.
+ *
+ * @param {String} name
+ * @param {Function} done
+ */
+Adapter.prototype.remove = function(name, done) {
+  this.db.collection(this.collection).remove({name: name}, function(err, numberOfRemovedDocs) {
+    if (err) return done(err);
+    if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + name + '"'));
+    done(null, true);
+  });
 };
