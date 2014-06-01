@@ -92,7 +92,7 @@ Adapter.prototype.save = function(name, email, pw, done) {
 
 
 /**
- * Find user. Match is either `name`, `email` or `signupToken`.
+ * Find user. Match is either `'name'`, `'email'` or `'signupToken'`.
  *
  * @example
    adapter.find('name', 'john', function(err, user) {
@@ -111,7 +111,7 @@ Adapter.prototype.save = function(name, email, pw, done) {
      // }
    });
  *
- * @param {String} match - Property to find user by. `name`, `email` or `signupToken`
+ * @param {String} match - Property to find user by. `'name'`, `'email'` or `'signupToken'`
  * @param {String} query - Corresponding value to `match`
  * @param {Function} done - Callback function `function(err, user){}`
  */
