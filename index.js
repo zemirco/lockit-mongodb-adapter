@@ -118,7 +118,7 @@ Adapter.prototype.save = function(name, email, pw, done) {
 Adapter.prototype.find = function(match, query, done) {
   var qry = {};
   qry[match] = query;
-  this.db.collection(this.collection).find(qry).nextObject(done);
+  this.db.collection(this.collection).findOne(qry, done);
 };
 
 
@@ -151,7 +151,7 @@ Adapter.prototype.update = function(user, done) {
   that.db.collection(that.collection).save(user, function(err, res) {
     if (err) return done(err);
     // res is not the updated user object! -> find manually
-    that.db.collection(that.collection).find({_id: user._id}).nextObject(done);
+    that.db.collection(that.collection).findOne({_id: user._id}, done);
   });
 };
 
