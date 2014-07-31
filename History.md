@@ -1,4 +1,8 @@
 
+##### 0.4.2 / 2014-07-31
+
+- use `findOne()` instead `find().nextObject()`
+
 ##### 0.4.1 / 2014-05-22
 
 - code refactoring
