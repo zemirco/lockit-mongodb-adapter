@@ -86,7 +86,9 @@ Adapter.prototype.save = function(name, email, pw, done) {
     if (err) {return done(err); }
     user.salt = salt;
     user.derived_key = hash;
-    that.db.collection(that.collection).save(user, done);
+    that.db.collection(that.collection).save(user, function(saveErr, result) {
+      done(saveErr, result.ops[0]);
+    });
   });
 };
 
@@ -172,9 +174,9 @@ Adapter.prototype.update = function(user, done) {
  * @param {Function} done - Callback function `function(err, res){}`
  */
 Adapter.prototype.remove = function(name, done) {
-  this.db.collection(this.collection).remove({name: name}, function(err, numberOfRemovedDocs) {
+  this.db.collection(this.collection).remove({name: name}, function(err, result) {
     if (err) {return done(err); }
-    if (numberOfRemovedDocs === 0) {return done(new Error('lockit - Cannot find user "' + name + '"')); }
+    if (result.result.n === 0) {return done(new Error('lockit - Cannot find user "' + name + '"')); }
     done(null, true);
   });
 };
