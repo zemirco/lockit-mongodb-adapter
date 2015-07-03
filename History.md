@@ -1,4 +1,10 @@
 
+##### 0.4.3 / 2015-07-03
+
+- use eslint
+- update dependencies
+- use make instead grunt
+
 ##### 0.4.2 / 2014-07-31
 
 - use `findOne()` instead `find().nextObject()`
