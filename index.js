@@ -1,3 +1,4 @@
+'use strict';
 
 var MongoClient = require('mongodb').MongoClient;
 var uuid = require('node-uuid');
@@ -20,7 +21,7 @@ var moment = require('moment');
  */
 var Adapter = module.exports = function(config) {
 
-  if (!(this instanceof Adapter)) return new Adapter(config);
+  if (!(this instanceof Adapter)) {return new Adapter(config); }
 
   this.config = config;
   this.collection = config.db.collection;
@@ -31,7 +32,7 @@ var Adapter = module.exports = function(config) {
   // create connection as soon as module is required and share global db object
   var that = this;
   MongoClient.connect(url, function(err, database) {
-    if (err) throw err;
+    if (err) {throw err; }
     that.db = database;
   });
 
@@ -82,7 +83,7 @@ Adapter.prototype.save = function(name, email, pw, done) {
 
   // create salt and hash
   pwd.hash(pw, function(err, salt, hash) {
-    if (err) return done(err);
+    if (err) {return done(err); }
     user.salt = salt;
     user.derived_key = hash;
     that.db.collection(that.collection).save(user, done);
@@ -148,8 +149,8 @@ Adapter.prototype.find = function(match, query, done) {
 Adapter.prototype.update = function(user, done) {
   var that = this;
   // update user in db
-  that.db.collection(that.collection).save(user, function(err, res) {
-    if (err) return done(err);
+  that.db.collection(that.collection).save(user, function(err) {
+    if (err) {return done(err); }
     // res is not the updated user object! -> find manually
     that.db.collection(that.collection).findOne({_id: user._id}, done);
   });
@@ -172,8 +173,8 @@ Adapter.prototype.update = function(user, done) {
  */
 Adapter.prototype.remove = function(name, done) {
   this.db.collection(this.collection).remove({name: name}, function(err, numberOfRemovedDocs) {
-    if (err) return done(err);
-    if (numberOfRemovedDocs === 0) return done(new Error('lockit - Cannot find user "' + name + '"'));
+    if (err) {return done(err); }
+    if (numberOfRemovedDocs === 0) {return done(new Error('lockit - Cannot find user "' + name + '"')); }
     done(null, true);
   });
 };
