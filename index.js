@@ -34,6 +34,15 @@ var Adapter = module.exports = function(config) {
   MongoClient.connect(url, function(err, database) {
     if (err) {throw err; }
     that.db = database;
+    
+    // Create single key indexes for username and email adress so they're both unique and faster to find
+    // @see http://docs.mongodb.org/manual/core/index-single/
+    database.collection(that.collection).createIndex({name:1},{unique:true});
+    database.collection(that.collection).createIndex({email:1},{unique:true});
+    
+    // This would create a compound index
+    // @see http://docs.mongodb.org/manual/core/index-compound/
+    // database.collection(that.collection).createIndex({name:1, email:1},{unique:true});
   });
 
 };
